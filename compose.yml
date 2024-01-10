@@ -1,0 +1,6 @@
+version: '3'
+services:
+  william-automation-cron:
+    build: .
+    volumes:
+      - ./logs:/var/log

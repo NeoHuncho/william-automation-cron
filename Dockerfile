@@ -17,5 +17,9 @@ RUN apk add --no-cache dcron logrotate
 # Add crontab file
 COPY crontab /etc/crontabs/root
 
+# Copy start script
+COPY start.sh .
+RUN chmod +x start.sh
+
 # Start cron, create and tail logs
-CMD crond && touch /var/log/cron.log && tail -f /var/log/cron.log
+CMD ["./start.sh"]

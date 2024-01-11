@@ -18,4 +18,4 @@ RUN apk add --no-cache dcron logrotate
 COPY crontab /etc/crontabs/root
 
 # Start cron, create and tail logs
-CMD crond
+CMD crond && touch /var/log/cron.log && tail -f /var/log/cron.log

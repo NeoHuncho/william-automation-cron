@@ -1,6 +1,7 @@
 version: '3'
 services:
   william-automation-cron:
-    build: .
+    container_name: william-automation-cron
+    image: william-automation-cron:latest
     volumes:
       - /srv/dev-disk-by-uuid-e5aad6d5-19c3-4432-b7e6-ce7d7ed33a09/automation-cron:/var/log

@@ -13,10 +13,9 @@ COPY . .
 
 # Install cron and setup logfile
 RUN apk add --no-cache dcron logrotate
-RUN touch /var/log/cron.log
 
 # Add crontab file
 COPY crontab /etc/crontabs/root
 
-# Start cron and tail logs
-CMD crond && tail -f /var/log/cron.log
+# Start cron, create and tail logs
+CMD crond && touch /var/log/cron.log && tail -f /var/log/cron.log

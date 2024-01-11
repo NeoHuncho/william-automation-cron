@@ -3,4 +3,4 @@ services:
   william-automation-cron:
     build: .
     volumes:
-      - ./logs:/var/log
+      - /logs:/var/log

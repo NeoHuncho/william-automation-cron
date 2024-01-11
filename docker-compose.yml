@@ -3,4 +3,4 @@ services:
   william-automation-cron:
     build: .
     volumes:
-      - /logs:/var/log
+      - /srv/dev-disk-by-uuid-e5aad6d5-19c3-4432-b7e6-ce7d7ed33a09/automation-cron:/var/log

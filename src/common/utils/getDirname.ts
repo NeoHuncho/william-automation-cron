@@ -8,5 +8,3 @@ export const getDirname = () => {
 };
 
 export const projectRoot = resolve(getDirname(), '../../../');
-
-console.log(projectRoot);

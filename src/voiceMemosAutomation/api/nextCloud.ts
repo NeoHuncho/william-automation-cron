@@ -1,7 +1,8 @@
 import { promises as fs } from 'fs';
 import path from 'path';
-import { createClient } from 'webdav';
-import { getDirname } from '../common/utils/getDirname.js';
+import { FileStat, createClient } from 'webdav';
+import { getDirname } from '../../common/utils/getDirname.js';
+import { voiceRecordingDirectory } from '../constants/constants.js';
 
 export const getUnprocessedNextCloudRecordings = async () => {
   const client = createClient(
@@ -14,13 +15,13 @@ export const getUnprocessedNextCloudRecordings = async () => {
 
   try {
     const directoryItems = await client.getDirectoryContents(
-      '/voice%20recording'
+      voiceRecordingDirectory
     );
-    const tempDirPath = path.join(getDirname(), 'temp');
+    const tempDirPath = path.join(getDirname(import.meta.url), 'temp/audio');
     await fs.mkdir(tempDirPath, { recursive: true });
-    //@ts-ignore
-    for (const item of directoryItems) {
-      if (item.type === 'file') {
+
+    for (const item of directoryItems as FileStat[]) {
+      if (!item.filename.includes('done') && item.type === 'file') {
         const fileContent = await client.getFileContents(item.filename, {
           format: 'binary',
         });
@@ -28,8 +29,8 @@ export const getUnprocessedNextCloudRecordings = async () => {
           tempDirPath,
           path.basename(item.filename)
         );
-        //@ts-ignore
-        await fs.writeFile(localFilePath, fileContent);
+
+        await fs.writeFile(localFilePath, fileContent as Buffer);
       }
     }
 

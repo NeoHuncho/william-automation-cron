@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "run voiceMemosAutomation": "tsc && node dist/voiceMemosAutomation/index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@deepgram/sdk": "^3.0.1",
     "dotenv": "^16.3.1",
+    "ffmpeg-static": "^5.2.0",
+    "fluent-ffmpeg": "^2.1.2",
     "ts-node": "^10.9.2",
     "webdav": "^5.3.1"
   },

@@ -33,8 +33,6 @@ export const getUnprocessedNextCloudRecordings = async () => {
         await fs.writeFile(localFilePath, fileContent as Buffer);
       }
     }
-
-    console.log('Files downloaded successfully');
   } catch (error) {
     console.error('Error downloading files:', error);
   }

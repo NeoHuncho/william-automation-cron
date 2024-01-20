@@ -12,6 +12,14 @@ export const transcribeAudio = async () => {
   const files = await readdir(tempDirPath);
 
   for (const file of files) {
+    if (!file.includes('di-clip-audio-2024-01-04-00-16-54-891_WgdHYlzL')) {
+      continue;
+    }
+
+    if (file === '.DS_Store') {
+      continue;
+    }
+
     const audioFilePath = path.join(tempDirPath, file);
     let wavFilePath;
 
@@ -49,7 +57,7 @@ export const transcribeAudio = async () => {
     );
 
     await writeFile(
-      path.join(tempScriptDirPath, wavFilePath.replace('.wav', '.txt')),
+      path.join(tempScriptDirPath, file.replace(/\.[^/.]+$/, '.txt')),
       result.results.channels[0].alternatives[0].transcript
     );
   }

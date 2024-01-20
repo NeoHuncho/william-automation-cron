@@ -5,7 +5,7 @@ import { getUnprocessedNextCloudRecordings } from './api/nextCloud.js';
 dotenv.config({ path: projectRoot + '/.env' });
 
 const index = async () => {
-  await getUnprocessedNextCloudRecordings();
+  // await getUnprocessedNextCloudRecordings();
   await transcribeAudio();
 };
 index();

@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "@deepgram/sdk": "^3.0.1",
+    "@notionhq/client": "^2.2.14",
+    "@tryfabric/martian": "^1.2.4",
     "axios": "^1.6.5",
     "dotenv": "^16.3.1",
     "ffmpeg-static": "^5.2.0",

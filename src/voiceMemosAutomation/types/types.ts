@@ -3,8 +3,6 @@ export enum VoiceRecordingType {
   DI,
   //quote
   Q,
-  //project idea
-  P,
   //dream
   DR,
   //doc

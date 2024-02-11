@@ -1,0 +1,6 @@
+export const notionDatabaseId = {
+  DI: '6815102148854a68bac7e74d949304e0',
+  DR: '7807742d5c7848bf8f0364750825e1a3',
+  Q: '815349f144434f11a0a073dc5d5bcd4d',
+  DO: '2820c4b5806247b2a1add5843225bdd4',
+};

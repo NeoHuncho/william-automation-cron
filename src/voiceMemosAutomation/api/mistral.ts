@@ -5,11 +5,11 @@ import { getDirname } from '../../common/utils/getDirname.js';
 import { aiPrompts } from '../constants/aiPrompts.js';
 import { VoiceRecordingType } from '../types/types.js';
 
-const getOpenAIGPT3Prompt = async (prompt: string) =>
+const getMistralLLMPrompt = async (prompt: string) =>
   await axios.post(
-    'https://api.openai.com/v1/chat/completions',
+    'https://api.mistral.ai/v1/chat/completions',
     {
-      model: 'gpt-3.5-turbo-1106',
+      model: 'mistral-medium',
 
       temperature: 0.2, // Lower value makes the output more focused and deterministic
       messages: [
@@ -22,7 +22,7 @@ const getOpenAIGPT3Prompt = async (prompt: string) =>
     {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        Authorization: `Bearer ${process.env.MISTRAL_API_KEY}`,
       },
     }
   );
@@ -55,7 +55,7 @@ export const aiParseVoiceMemo = async ({
   });
 
   if (type === VoiceRecordingType.DI) {
-    const res = await getOpenAIGPT3Prompt(
+    const res = await getMistralLLMPrompt(
       formatPrompt(aiPrompts.DI.diaryEntryPrompt, file)
     );
     await writeFile(

@@ -1,8 +1,22 @@
-import { diaryEntryCleaned, diaryEntryPrompt } from './constants.js';
+import {
+  diaryEntryOrDreamPrompt,
+  documentationPrompt,
+  textCleaned,
+} from './constants.js';
 
 export const aiPrompts = {
   DI: {
-    diaryEntryPrompt: diaryEntryPrompt,
-    diaryEntryCleaned: diaryEntryCleaned,
+    diaryEntryPrompt: diaryEntryOrDreamPrompt('diary entry'),
+    diaryEntryCleaned: textCleaned,
+  },
+  DR: {
+    dreamPrompt: diaryEntryOrDreamPrompt('dreams'),
+    dreamCleaned: textCleaned,
+  },
+  Q: {
+    quotePrompt: textCleaned,
+  },
+  DO: {
+    documentationPrompt: documentationPrompt,
   },
 };

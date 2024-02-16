@@ -1,9 +1,8 @@
 import axios from 'axios';
-import { mkdir, readFile, writeFile } from 'fs/promises';
-import path from 'path';
-import { getDirname } from '../../common/utils/getDirname.js';
 import { aiPrompts } from '../constants/aiPrompts.js';
-import { VoiceRecordingType } from '../types/types.js';
+import { stringObject, transcriptTypeObject } from '../types/types.js';
+import { determineTranscriptType } from '../utils/determineTranscriptType.js';
+import { logger } from './logger.js';
 
 const getMistralLLMPrompt = async (prompt: string) =>
   await axios.post(
@@ -31,40 +30,25 @@ const formatPrompt = (prompt: string, text: string) => {
   return `${prompt}\n${text}`;
 };
 
-export const aiParseVoiceMemo = async ({
-  voiceMemoTranscriptFileName,
-  type,
-}: {
-  voiceMemoTranscriptFileName: string;
-  type: VoiceRecordingType;
-}) => {
-  if (!voiceMemoTranscriptFileName.endsWith('.txt')) {
-    throw new Error('voiceMemoTranscriptFileName must be a path to a txt file');
-  }
-  const tempScriptDirPath = path.join(
-    getDirname(import.meta.url),
-    'temp/script/'
-  );
-  const file = await readFile(
-    path.join(tempScriptDirPath + voiceMemoTranscriptFileName),
-    'utf-8'
-  );
-  // get all text from file and put it in a const value
-  await mkdir(path.join(getDirname(import.meta.url), 'temp/aiScript'), {
-    recursive: true,
-  });
+export const aiParseVoiceMemo = async (transcripts: stringObject) => {
+  const aiScripts: transcriptTypeObject = {};
+  for (const [key, file] of Object.entries(transcripts)) {
+    const type = determineTranscriptType(key);
+    if (type === undefined) {
+      logger().error('could not find type of file', {
+        file: key,
+      });
+      continue;
+    }
 
-  if (type === VoiceRecordingType.DI) {
-    const res = await getMistralLLMPrompt(
-      formatPrompt(aiPrompts.DI.diaryEntryPrompt, file)
-    );
-    await writeFile(
-      path.join(
-        getDirname(import.meta.url),
-        'temp/aiScript',
-        path.basename(voiceMemoTranscriptFileName)
-      ),
-      res.data.choices[0].message.content
+    Object.entries(aiPrompts[type]).forEach(
+      async ([transcriptType, prompt]) => {
+        const res = await getMistralLLMPrompt(
+          formatPrompt(prompt as string, file)
+        );
+        aiScripts[key][transcriptType] = res.data.choices[0].message.content;
+      }
     );
   }
+  return aiScripts;
 };

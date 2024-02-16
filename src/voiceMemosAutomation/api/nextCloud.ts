@@ -1,8 +1,7 @@
-import { promises as fs } from 'fs';
-import path from 'path';
 import { FileStat, createClient } from 'webdav';
-import { getDirname } from '../../common/utils/getDirname.js';
 import { voiceRecordingDirectory } from '../constants/constants.js';
+import { BufferObject } from '../types/types.js';
+import { logger } from './logger.js';
 
 export const getUnprocessedNextCloudRecordings = async () => {
   const client = createClient(
@@ -17,22 +16,25 @@ export const getUnprocessedNextCloudRecordings = async () => {
     const directoryItems = await client.getDirectoryContents(
       voiceRecordingDirectory
     );
-    const tempDirPath = path.join(getDirname(import.meta.url), 'temp/audio');
-    await fs.mkdir(tempDirPath, { recursive: true });
-
+    const data: BufferObject = {};
     for (const item of directoryItems as FileStat[]) {
-      if (!item.filename.includes('done') && item.type === 'file') {
-        const fileContent = await client.getFileContents(item.filename, {
-          format: 'binary',
-        });
-        const localFilePath = path.join(
-          tempDirPath,
-          path.basename(item.filename)
-        );
-
-        await fs.writeFile(localFilePath, fileContent as Buffer);
+      if (item.type !== 'file') {
+        logger().error('Item is not a file:', item);
+        continue;
       }
+      if (item.filename.includes('[DONE]')) continue;
+
+      const fileContent = await client.getFileContents(item.filename, {
+        format: 'binary',
+      });
+      if (fileContent instanceof Buffer) data[item.filename] = fileContent;
+      else
+        logger().error('Error downloading file: fileContent is not a buffer', {
+          name: item.filename,
+          type: typeof fileContent,
+        });
     }
+    return data;
   } catch (error) {
     console.error('Error downloading files:', error);
   }

@@ -1,4 +1,4 @@
-export enum VoiceRecordingType {
+export enum VoiceRecordingTypes {
   //diary entry
   DI,
   //quote
@@ -8,3 +8,18 @@ export enum VoiceRecordingType {
   //doc
   DO,
 }
+
+export enum TranscriptTypes {
+  transcript,
+  cleaned,
+}
+
+export type VoiceRecordingType = keyof typeof VoiceRecordingTypes;
+
+export type BufferObject = { [K in VoiceRecordingType]?: Buffer };
+export type stringObject = { [K in VoiceRecordingType]?: string };
+export type transcriptTypeObject = {
+  [K in VoiceRecordingType]?: {
+    [J in keyof typeof TranscriptTypes]?: string;
+  };
+};

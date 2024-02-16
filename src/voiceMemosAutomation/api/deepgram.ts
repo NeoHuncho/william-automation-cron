@@ -1,64 +1,42 @@
 import { createClient } from '@deepgram/sdk';
-import { readFileSync } from 'fs';
-import { mkdir, readdir, writeFile } from 'fs/promises';
-import path from 'path';
-import { getDirname } from '../../common/utils/getDirname.js';
-import { convertToWav } from '../utils/convertAudioToWav.js';
-
-export const transcribeAudio = async () => {
+import { fileTypeFromBuffer } from 'file-type';
+import { BufferObject, stringObject } from '../types/types.js';
+import { convertBufferToWav } from '../utils/convertBufferToWav.js';
+import { logger } from './logger.js';
+export const transcribeAudio = async (mp3Files: BufferObject) => {
   const deepgram = createClient(process.env.DEEPGRAM_API_KEY);
-
-  const tempDirPath = path.join(getDirname(import.meta.url), 'temp/audio');
-  const files = await readdir(tempDirPath);
-
-  for (const file of files) {
-    if (!file.includes('di-clip-audio-2024-01-04-00-16-54-891_WgdHYlzL')) {
-      continue;
-    }
-
-    if (file === '.DS_Store') {
-      continue;
-    }
-
-    const audioFilePath = path.join(tempDirPath, file);
-    let wavFilePath;
-
-    if (!file.endsWith('.wav')) {
+  const transcripts: stringObject = {};
+  for (const [key, file] of Object.entries(mp3Files)) {
+    const type = await fileTypeFromBuffer(file);
+    let wavFile = file;
+    if (type.ext !== 'wav') {
       try {
-        wavFilePath = audioFilePath.replace(/\.[^/.]+$/, '.wav');
-        await convertToWav(audioFilePath, wavFilePath);
-      } catch (e) {
-        console.log('Error converting file:', file);
-        console.error(e);
+        await convertBufferToWav(file, type.ext);
+      } catch (error) {
+        logger().error('Error converting file to wav:', {
+          name: key,
+          type: type.ext,
+          error,
+        });
         continue;
       }
-    } else {
-      wavFilePath = audioFilePath;
     }
 
     const { result, error } = await deepgram.listen.prerecorded.transcribeFile(
-      readFileSync(wavFilePath),
+      wavFile,
       {
         model: 'nova',
       }
     );
     if (error) {
-      console.log('Error transcribing file:', file);
-      console.error(error);
+      logger().error('Error transcribing file:', {
+        name: key,
+        error,
+      });
       continue;
     }
 
-    await mkdir(path.join(getDirname(import.meta.url), 'temp/script'), {
-      recursive: true,
-    });
-    const tempScriptDirPath = path.join(
-      getDirname(import.meta.url),
-      'temp/script'
-    );
-
-    await writeFile(
-      path.join(tempScriptDirPath, file.replace(/\.[^/.]+$/, '.txt')),
-      result.results.channels[0].alternatives[0].transcript
-    );
+    transcripts[key] = result.results.channels[0].alternatives[0].transcript;
   }
+  return transcripts;
 };

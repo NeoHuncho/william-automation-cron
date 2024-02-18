@@ -3,7 +3,10 @@ import { logger } from '../common/logger.js';
 import { projectRoot } from '../common/utils/getDirname.js';
 import { transcribeAudio } from './api/deepgram.js';
 import { aiParseVoiceMemo } from './api/mistral.js';
-import { getUnprocessedNextCloudRecordings } from './api/nextCloud.js';
+import {
+  getUnprocessedNextCloudRecordings,
+  moveProcessedFiles,
+} from './api/nextCloud.js';
 import { addPageToDatabase, startNotionClient } from './api/notion.js';
 dotenv.config({ path: projectRoot + '/.env' });
 
@@ -14,11 +17,12 @@ const index = async () => {
     const markdownScripts = await aiParseVoiceMemo(transcripts);
 
     const notionClient = startNotionClient();
-    await addPageToDatabase({
+    const processedTranscripts = await addPageToDatabase({
       client: notionClient,
       recordings,
       scripts: markdownScripts,
     });
+    await moveProcessedFiles(processedTranscripts);
   } catch (error) {
     logger.error('🚨Unhandled error ocurred🚨 :', error);
   }

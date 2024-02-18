@@ -1,4 +1,4 @@
-import { TranscriptTypes, VoiceRecordingType } from '../types/types.js';
+import { RecordingTypeKey, TranscriptVariants } from '../types/types.js';
 import {
   diaryEntryOrDreamPrompt,
   documentationPrompt,
@@ -6,23 +6,23 @@ import {
 } from './constants.js';
 
 type PromptObject = {
-  [K in VoiceRecordingType]?: {
-    [J in keyof typeof TranscriptTypes]?: string;
+  [K in RecordingTypeKey]?: {
+    [J in keyof typeof TranscriptVariants]?: string;
   };
 };
 export const aiPrompts: PromptObject = {
   DI: {
-    transcript: diaryEntryOrDreamPrompt('diary entry'),
-    cleaned: textCleaned,
+    transcript: textCleaned,
+    enhanced: diaryEntryOrDreamPrompt('diary entry'),
   },
   DR: {
-    transcript: diaryEntryOrDreamPrompt('dreams'),
-    cleaned: textCleaned,
+    transcript: textCleaned,
+    enhanced: diaryEntryOrDreamPrompt('dreams'),
   },
   Q: {
     transcript: textCleaned,
   },
   DO: {
-    transcript: documentationPrompt,
+    enhanced: documentationPrompt,
   },
 };

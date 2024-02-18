@@ -1,19 +1,19 @@
 import { createClient } from '@deepgram/sdk';
 import { fileTypeFromBuffer } from 'file-type';
-import { BufferObject, stringObject } from '../types/types.js';
+import { logger } from '../../common/logger.js';
+import { FileInfoMap, StringMap } from '../types/types.js';
 import { convertBufferToWav } from '../utils/convertBufferToWav.js';
-import { logger } from './logger.js';
-export const transcribeAudio = async (mp3Files: BufferObject) => {
+export const transcribeAudio = async (recordings: FileInfoMap) => {
   const deepgram = createClient(process.env.DEEPGRAM_API_KEY);
-  const transcripts: stringObject = {};
-  for (const [key, file] of Object.entries(mp3Files)) {
-    const type = await fileTypeFromBuffer(file);
-    let wavFile = file;
+  const transcripts: StringMap = {};
+  for (const [key, file] of Object.entries(recordings)) {
+    const type = await fileTypeFromBuffer(file.buffer);
+    let wavFile = file.buffer;
     if (type.ext !== 'wav') {
       try {
-        await convertBufferToWav(file, type.ext);
+        await convertBufferToWav(file.buffer, type.ext);
       } catch (error) {
-        logger().error('Error converting file to wav:', {
+        logger.error('Error converting file to wav:', {
           name: key,
           type: type.ext,
           error,
@@ -29,7 +29,7 @@ export const transcribeAudio = async (mp3Files: BufferObject) => {
       }
     );
     if (error) {
-      logger().error('Error transcribing file:', {
+      logger.error('Error transcribing file:', {
         name: key,
         error,
       });

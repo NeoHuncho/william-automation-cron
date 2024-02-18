@@ -16,6 +16,7 @@ export const getUnprocessedNextCloudRecordings = async () => {
     const directoryItems = await client.getDirectoryContents(
       voiceRecordingDirectory
     );
+    console.log('directoryItems:', directoryItems);
     const data: FileInfoMap = {};
     for (const item of directoryItems as FileStat[]) {
       if (item.type !== 'file') {
@@ -29,13 +30,13 @@ export const getUnprocessedNextCloudRecordings = async () => {
         format: 'binary',
       });
       if (fileContent instanceof Buffer)
-        data[item.filename] = {
+        data[item.basename] = {
           lastModified: item.lastmod,
           buffer: fileContent,
         };
       else
         logger.error('Error downloading file: fileContent is not a buffer', {
-          name: item.filename,
+          name: item.basename,
           type: typeof fileContent,
         });
     }

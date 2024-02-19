@@ -14,15 +14,20 @@ const index = async () => {
   initLogger();
   try {
     const recordings = await getUnprocessedNextCloudRecordings();
-    const transcripts = await transcribeAudio(recordings);
-    const markdownScripts = await aiParseVoiceMemo(transcripts);
 
+    const transcripts = await transcribeAudio(recordings);
+    console.log('transcripts', transcripts);
+    const markdownScripts = await aiParseVoiceMemo(transcripts);
+    console.log('markdown', markdownScripts);
     const notionClient = startNotionClient();
+
     const processedTranscripts = await addPageToDatabase({
       client: notionClient,
       recordings,
       scripts: markdownScripts,
     });
+    console.log('processedTranscripts', processedTranscripts);
+
     await moveProcessedFiles(processedTranscripts);
   } catch (error) {
     logger.error('🚨Unhandled error ocurred🚨 :', error);

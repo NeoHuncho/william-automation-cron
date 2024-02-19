@@ -1,15 +1,14 @@
 import axios from 'axios';
 import { logger } from '../../common/logger.js';
 import { aiPrompts } from '../constants/aiPrompts.js';
-import { tagsPreSuffix, titlePreSuffix } from '../constants/constants.js';
 import { StringMap, TranscriptMap } from '../types/types.js';
 import { determineTranscriptType } from '../utils/determineTranscriptType.js';
 
 const getMistralLLMPrompt = async (prompt: string) =>
-  await axios.post(
-    'https://api.mistral.ai/v1/chat/completions',
+  axios.post(
+    'https://api.openai.com/v1/chat/completions',
     {
-      model: 'mistral-medium',
+      model: 'gpt-3.5-turbo-1106',
 
       temperature: 0.2, // Lower value makes the output more focused and deterministic
       messages: [
@@ -22,7 +21,7 @@ const getMistralLLMPrompt = async (prompt: string) =>
     {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.MISTRAL_API_KEY}`,
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
     }
   );
@@ -42,24 +41,24 @@ export const aiParseVoiceMemo = async (transcripts: StringMap) => {
       continue;
     }
 
-    Object.entries(aiPrompts[type]).forEach(
-      async ([transcriptType, prompt]) => {
-        const res = await getMistralLLMPrompt(
-          formatPrompt(prompt as string, file)
-        );
-        aiScripts[key][transcriptType] = res.data.choices[0].message.content;
-        if (transcriptType == 'enchanced') {
-          const title = res.data.choices[0].message.content
-            .split(titlePreSuffix)[1]
-            .split(titlePreSuffix)[0];
-          aiScripts[key]['title'] = title;
-        }
-        const tags = res.data.choices[0].message.content
-          .split(tagsPreSuffix)[1]
-          .split(tagsPreSuffix)[0];
-        aiScripts[key]['tags'] = tags;
+    const entries = Object.entries(aiPrompts[type]);
+    for (const [transcriptType, prompt] of entries) {
+      const res = await getMistralLLMPrompt(
+        formatPrompt(prompt as string, file)
+      );
+      if (!aiScripts[key]) {
+        aiScripts[key] = {};
       }
-    );
+      aiScripts[key][transcriptType] = res.data.choices[0].message.content;
+      if (transcriptType == 'enhanced') {
+        //find the title which will be the first h1 in the markdown
+        const title =
+          res.data.choices[0].message.content.match(/(?<=^# |^#).+?(?=\n)/);
+        if (title) {
+          aiScripts[key]['title'] = title[0];
+        } else aiScripts[key]['title'] = 'No title found';
+      }
+    }
   }
   return aiScripts;
 };

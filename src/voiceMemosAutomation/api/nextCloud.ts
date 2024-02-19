@@ -16,7 +16,6 @@ export const getUnprocessedNextCloudRecordings = async () => {
     const directoryItems = await client.getDirectoryContents(
       voiceRecordingDirectory
     );
-    console.log('directoryItems:', directoryItems);
     const data: FileInfoMap = {};
     for (const item of directoryItems as FileStat[]) {
       if (item.type !== 'file') {
@@ -58,7 +57,7 @@ export const moveProcessedFiles = async (files: string[]) => {
   try {
     for (const file of files) {
       await client.moveFile(
-        file,
+        `${voiceRecordingDirectory}/${file}`,
         `${voiceRecordingDirectory}/processed/${file}`
       );
     }

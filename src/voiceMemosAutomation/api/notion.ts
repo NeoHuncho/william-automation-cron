@@ -1,5 +1,4 @@
 import { Client } from '@notionhq/client';
-import { BlockObjectRequest } from '@notionhq/client/build/src/api-endpoints.js';
 import { markdownToBlocks } from '@tryfabric/martian';
 import { logger } from '../../common/logger.js';
 import { notionDatabaseId } from '../constants/notionDatabaseId.js';
@@ -10,14 +9,12 @@ export const startNotionClient = () =>
 
 async function createEntryDatabase({
   title,
-  tags,
   recordingAt,
   client,
   pageText,
   key,
 }: {
   title: string;
-  tags: string[];
   recordingAt: string;
   client: Client;
   pageText?: string;
@@ -38,21 +35,16 @@ async function createEntryDatabase({
         start: new Date(recordingAt).toISOString(),
       },
     },
-    Tags: {
-      multi_select: {
-        options: tags.map((tag) => ({ name: tag })),
-      },
-    },
   };
-  if (pageText)
-    (properties['children'] = markdownToBlocks(
-      pageText
-    ) as BlockObjectRequest[]),
-      await client.pages.create({
-        parent: { database_id: notionDatabaseId[determineTranscriptType(key)] },
-        // @ts-ignore
-        properties: properties,
-      });
+
+  const pageCreateProperties = {
+    parent: { database_id: notionDatabaseId[determineTranscriptType(key)] },
+    properties,
+  };
+  if (pageText) {
+    pageCreateProperties['children'] = markdownToBlocks(pageText);
+  }
+  const res = await client.pages.create(pageCreateProperties);
 }
 
 export async function addPageToDatabase({
@@ -71,33 +63,28 @@ export async function addPageToDatabase({
       logger.error('Recording not found:', key);
       continue;
     }
-    const tags = transcripts['tags']
-      .split(',')
-      .map((tag) => ({ name: tag.trim() }));
-    if (tags.length === 0) {
-      logger.error('No tags found:', key);
-      continue;
-    }
-    if (transcripts.enhanced === undefined) {
+    try {
+      if (transcripts.enhanced === undefined) {
+        await createEntryDatabase({
+          title: transcripts.transcript,
+          recordingAt: recording.lastModified,
+          client,
+          key,
+        });
+        processedKeys.push(key);
+        continue;
+      }
       await createEntryDatabase({
-        title: transcripts.transcript,
-        tags,
+        title: transcripts['title'],
         recordingAt: recording.lastModified,
         client,
+        pageText: transcripts.enhanced,
         key,
       });
       processedKeys.push(key);
-      continue;
+    } catch (error) {
+      logger.error('Error creating page in Notion:', error);
     }
-    await createEntryDatabase({
-      title: transcripts['title'],
-      tags,
-      recordingAt: recording.lastModified,
-      client,
-      pageText: transcripts.enhanced,
-      key,
-    });
-    processedKeys.push(key);
   }
   return processedKeys;
 }

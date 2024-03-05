@@ -12,12 +12,14 @@ async function createEntryDatabase({
   recordingAt,
   client,
   pageText,
+  transcript,
   key,
 }: {
   title: string;
   recordingAt: string;
   client: Client;
   pageText?: string;
+  transcript?: string;
   key: string;
 }) {
   const properties = {
@@ -41,10 +43,47 @@ async function createEntryDatabase({
     parent: { database_id: notionDatabaseId[determineTranscriptType(key)] },
     properties,
   };
-  if (pageText) {
-    pageCreateProperties['children'] = markdownToBlocks(pageText);
+
+  if (transcript) {
+    pageCreateProperties['children'] = [
+      {
+        object: 'block',
+        type: 'toggle',
+        toggle: {
+          rich_text: [
+            {
+              type: 'text',
+              text: {
+                content: 'Transcript',
+              },
+            },
+          ],
+          children: [
+            {
+              object: 'block',
+              type: 'paragraph',
+              paragraph: {
+                rich_text: [
+                  {
+                    type: 'text',
+                    text: {
+                      content: transcript,
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    ];
   }
-  const res = await client.pages.create(pageCreateProperties);
+
+  if (pageText) {
+    pageCreateProperties['children'].push(...markdownToBlocks(pageText));
+  }
+
+  await client.pages.create(pageCreateProperties);
 }
 
 export async function addPageToDatabase({
@@ -80,10 +119,12 @@ export async function addPageToDatabase({
         client,
         pageText: transcripts.enhanced,
         key,
+        transcript: transcripts.transcript,
       });
       processedKeys.push(key);
     } catch (error) {
-      logger.error('Error creating page in Notion:', error);
+      console.log(error);
+      // logger.error('Error creating page in Notion:', error);
     }
   }
   return processedKeys;

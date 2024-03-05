@@ -30,6 +30,7 @@ const index = async () => {
 
     await moveProcessedFiles(processedTranscripts);
   } catch (error) {
+    console.log(error);
     logger.error('🚨Unhandled error ocurred🚨 :', error);
   }
 };

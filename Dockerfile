@@ -1,21 +1,24 @@
-FROM node:alpine
+# Use an official Node runtime as the base image
+FROM node:apline
 
-# Create app directory
-WORKDIR /usr/src/app
+# Set the working directory in the container to /app
+WORKDIR /app
 
-# Install app dependencies
+# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
+# Install any needed packages specified in package.json
 RUN npm install
 
-# Bundle app source
+# Bundle the source code inside the Docker image
 COPY . .
 
-# Install cron and setup logfile
-RUN apk add --no-cache dcron logrotate
+# Build the TypeScript code
+RUN npm run build
 
-# Add crontab file
-COPY crontab /etc/crontabs/root
+# Install cron and set up the cron job
+RUN apt-get update && apt-get install -y cron
+RUN echo "0 4 * * * /app/run.sh" > /etc/crontabs/root
 
-# Start cron, create and tail logs
-CMD crond && touch /var/log/cron.log && tail -f /var/log/cron.log
+# Start cron in the foreground
+CMD ["cron", "-f"]

@@ -16,8 +16,10 @@ export const transcribeAudio = async (recordings: FileInfoMap) => {
     );
     if (error) {
       logger.error('Error transcribing file:', {
-        name: key,
-        error,
+        fileName: key,
+        errorName: error.name,
+        errorMessage: error.message,
+        errorStack: error.stack,
       });
       continue;
     }

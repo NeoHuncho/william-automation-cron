@@ -1,6 +1,12 @@
 version: '3'
 services:
   william-automation-cron:
-    build: .
-    volumes:
-      - /srv/dev-disk-by-uuid-e5aad6d5-19c3-4432-b7e6-ce7d7ed33a09/automation-cron:/var/log
+    image: neohuncho/william-automation-cron
+    restart: unless-stopped
+    environment:
+      - NEXTCLOUD_PASSWORD=${NEXTCLOUD_PASSWORD}
+      - DEEPGRAM_API_KEY=${DEEPGRAM_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY}
+      - NOTION_API_KEY=${NOTION_API_KEY}
+      - HOST_LOKI=${HOST_LOKI}

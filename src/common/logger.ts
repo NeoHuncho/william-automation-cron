@@ -1,19 +1,35 @@
-import winston from 'winston';
+import { Logger, createLogger, format, transports } from 'winston';
 import LokiTransport from 'winston-loki';
 
-export let logger: winston.Logger | null = null;
+export let logger: Logger | null = null;
 
 export const initLogger = () => {
-  const transports: winston.transport[] = [
-    new LokiTransport({
-      host: process.env.HOST_LOKI,
-      labels: { job: 'voiceMemoAutomation' },
-    }),
-  ];
-
-  if (process.env.NODE_ENV !== 'production') {
-    transports.push(new winston.transports.Console());
+  if (logger) {
+    return;
   }
 
-  logger = winston.createLogger({ transports });
+  const loggerTransports = [];
+
+  if (process.env.NODE_ENV === 'production') {
+    loggerTransports.push(
+      new LokiTransport({
+        host: process.env.HOST_LOKI,
+        labels: { job: 'voiceMemoAutomation' },
+        json: true,
+        format: format.json(),
+        replaceTimestamp: true,
+        onConnectionError: (err) => console.error(err),
+      })
+    );
+  }
+
+  loggerTransports.push(
+    new transports.Console({
+      format: format.combine(format.simple(), format.colorize()),
+    })
+  );
+
+  logger = createLogger({
+    transports: loggerTransports,
+  });
 };

@@ -37,14 +37,41 @@ async function createEntryDatabase({
         start: new Date(recordingAt).toISOString(),
       },
     },
+    'Recording name': {
+      rich_text: [
+        {
+          text: {
+            content: key,
+          },
+        },
+      ],
+    },
   };
 
   const pageCreateProperties = {
-    parent: { database_id: notionDatabaseId[determineTranscriptType(key)] },
+    parent: { database_id: notionDatabaseId()[determineTranscriptType(key)] },
     properties,
   };
 
   if (transcript) {
+    const maxContentLength = 2000;
+    const transcriptChunks =
+      transcript.match(new RegExp(`.{1,${maxContentLength}}`, 'g')) || [];
+    const transcriptBlocks = transcriptChunks.map((chunk) => ({
+      object: 'block',
+      type: 'paragraph',
+      paragraph: {
+        rich_text: [
+          {
+            type: 'text',
+            text: {
+              content: chunk,
+            },
+          },
+        ],
+      },
+    }));
+
     pageCreateProperties['children'] = [
       {
         object: 'block',
@@ -58,22 +85,7 @@ async function createEntryDatabase({
               },
             },
           ],
-          children: [
-            {
-              object: 'block',
-              type: 'paragraph',
-              paragraph: {
-                rich_text: [
-                  {
-                    type: 'text',
-                    text: {
-                      content: transcript,
-                    },
-                  },
-                ],
-              },
-            },
-          ],
+          children: transcriptBlocks,
         },
       },
     ];
@@ -123,8 +135,7 @@ export async function addPageToDatabase({
       });
       processedKeys.push(key);
     } catch (error) {
-      console.log(error);
-      // logger.error('Error creating page in Notion:', error);
+      logger.error('Error creating page in Notion:', error);
     }
   }
   return processedKeys;

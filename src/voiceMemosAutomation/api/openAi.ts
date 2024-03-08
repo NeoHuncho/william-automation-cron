@@ -4,7 +4,7 @@ import { aiPrompts } from '../constants/aiPrompts.js';
 import { StringMap, TranscriptMap } from '../types/types.js';
 import { determineTranscriptType } from '../utils/determineTranscriptType.js';
 
-const getMistralLLMPrompt = async (prompt: string) =>
+const getOpenAiLLMPrompt = async (prompt: string) =>
   axios
     .post(
       'https://api.openai.com/v1/chat/completions',
@@ -27,8 +27,7 @@ const getMistralLLMPrompt = async (prompt: string) =>
       }
     )
     .catch((error) => {
-      console.log('Error getting Mistral LLMPrompt:', error);
-      logger.error('Error getting Mistral LLMPrompt:', error);
+      logger.error('Error getting OpenAi LLMPrompt:', error);
       return undefined;
     });
 
@@ -49,7 +48,7 @@ export const aiParseVoiceMemo = async (transcripts: StringMap) => {
 
     const entries = Object.entries(aiPrompts[type]);
     for (const [transcriptType, prompt] of entries) {
-      const res = await getMistralLLMPrompt(
+      const res = await getOpenAiLLMPrompt(
         formatPrompt(prompt as string, file)
       );
       if (res === undefined) continue;

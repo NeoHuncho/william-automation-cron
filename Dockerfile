@@ -7,6 +7,10 @@ WORKDIR /app
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
+# Install Python, make, g++, and any needed packages specified in package.json
+RUN apk add --no-cache python3 make g++ && ln -sf python3 /usr/bin/python
+RUN npm install
+
 # Install any needed packages specified in package.json
 RUN npm install
 

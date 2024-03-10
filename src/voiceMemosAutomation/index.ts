@@ -37,4 +37,4 @@ const processRecordings = async () => {
 };
 
 // Schedule the processRecordings function to run every day at 4 AM
-cron.schedule('*/5 * * * *', processRecordings);
+cron.schedule('0 4 * * *', processRecordings);

@@ -17,6 +17,7 @@
     "ffmpeg-static": "^5.2.0",
     "file-type": "^19.0.0",
     "fluent-ffmpeg": "^2.1.2",
+    "node-cron": "^3.0.3",
     "ts-node": "^10.9.2",
     "webdav": "^5.3.1",
     "winston": "^3.11.0",

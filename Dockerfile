@@ -17,9 +17,5 @@ COPY . .
 # Build the TypeScript code
 RUN npm run build
 
-# Install cron and set up the cron job
-RUN apt-get install -y cron
-RUN echo "0 4 * * * /app/run.sh" > /var/spool/cron/crontabs/root
-
-# Start cron in the foreground
-CMD ["cron", "-f"]
+# Start the application
+CMD ["node", "/app/dist/voiceMemosAutomation/index.js"]

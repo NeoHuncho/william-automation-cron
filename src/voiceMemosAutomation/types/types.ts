@@ -5,8 +5,6 @@ export enum VoiceRecordingVariants {
   Q,
   //dream
   DR,
-  //doc
-  DO,
 }
 
 export enum TranscriptVariants {

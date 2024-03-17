@@ -12,9 +12,5 @@ export const notionDatabaseId = () => {
       process.env.NODE_ENV !== 'production'
         ? '89d369a6f0a04ecf838ebd11f1e1d948'
         : '815349f144434f11a0a073dc5d5bcd4d',
-    DO:
-      process.env.NODE_ENV !== 'production'
-        ? '596d083fe96c46429b7e2e4243985742'
-        : '2820c4b5806247b2a1add5843225bdd4',
   };
 };

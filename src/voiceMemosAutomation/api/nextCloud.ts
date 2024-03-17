@@ -5,7 +5,7 @@ import { FileInfoMap } from '../types/types.js';
 
 export const getUnprocessedNextCloudRecordings = async () => {
   const client = createClient(
-    'https://cloud.williamguinaudie.com/remote.php/webdav',
+    `${process.env.NEXTCLOUD_PASSWORD}/remote.php/webdav`,
     {
       username: 'william',
       password: process.env.NEXTCLOUD_PASSWORD,

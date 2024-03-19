@@ -11,7 +11,7 @@ import { addPageToDatabase, startNotionClient } from './api/notion.js';
 import { aiParseVoiceMemo } from './api/openAi.js';
 dotenv.config({ path: projectRoot + '/.env' });
 
-const processRecordings = async () => {
+export const processRecordings = async () => {
   initLogger();
   try {
     const recordings = await getUnprocessedNextCloudRecordings();

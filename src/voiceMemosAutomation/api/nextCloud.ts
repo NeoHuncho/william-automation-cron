@@ -49,7 +49,7 @@ export const getUnprocessedNextCloudRecordings = async () => {
 
 export const moveProcessedFiles = async (files: string[]) => {
   const client = createClient(
-    'https://cloud.williamguinaudie.com/remote.php/webdav',
+    `${process.env.NEXTCLOUD_HOST}/remote.php/webdav`,
     {
       username: 'william',
       password: process.env.NEXTCLOUD_PASSWORD,

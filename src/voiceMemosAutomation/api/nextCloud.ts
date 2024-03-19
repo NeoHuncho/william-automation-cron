@@ -4,7 +4,6 @@ import { voiceRecordingDirectory } from '../constants/constants.js';
 import { FileInfoMap } from '../types/types.js';
 
 export const getUnprocessedNextCloudRecordings = async () => {
-  console.log(process.env.NEXTCLOUD_HOST, process.env.NEXTCLOUD_PASSWORD);
   const client = createClient(
     `${process.env.NEXTCLOUD_HOST}/remote.php/webdav`,
     {

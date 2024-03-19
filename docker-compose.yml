@@ -3,6 +3,7 @@ services:
   william-automation-cron:
     image: neohuncho/william-automation-cron
     restart: unless-stopped
+    container_name: william-automation-cron
     environment:
       - NEXTCLOUD_PASSWORD=${NEXTCLOUD_PASSWORD}
       - DEEPGRAM_API_KEY=${DEEPGRAM_API_KEY}

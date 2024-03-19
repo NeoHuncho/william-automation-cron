@@ -1,3 +1,4 @@
+# dont forget to also change docker-compose.yml in rasbpian-docker-compose
 version: '3'
 services:
   william-automation-cron:

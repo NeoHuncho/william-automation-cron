@@ -39,13 +39,6 @@ export const aiParseVoiceMemo = async (transcripts: StringMap) => {
   const aiScripts: TranscriptMap = {};
   for (const [key, file] of Object.entries(transcripts)) {
     const type = determineTranscriptType(key);
-    if (type === undefined) {
-      logger.error('could not find type of file', {
-        file: key,
-      });
-      continue;
-    }
-
     const entries = Object.entries(aiPrompts[type]);
     for (const [transcriptType, prompt] of entries) {
       const res = await getOpenAiLLMPrompt(

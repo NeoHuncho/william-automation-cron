@@ -8,7 +8,7 @@ export function determineTranscriptType(
   ) as VoiceRecordingVariants[];
   const prefix = str.slice(0, 2);
   const match = enumValues.find((val) =>
-    prefix.toUpperCase().includes(val.toString())
+    prefix.toUpperCase().includes(val.toString().toUpperCase())
   );
 
   return match ?? undefined;

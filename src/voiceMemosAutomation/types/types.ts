@@ -18,7 +18,7 @@ type FileInfoContent = {
   buffer: Buffer;
 };
 
-export type FileInfoMap = { [k: string]: FileInfoContent };
+export type FileInfoMap = Record<string, FileInfoContent>;
 export type StringMap = { [K: string]: string };
 export type TranscriptMap = {
   [k: string]: {

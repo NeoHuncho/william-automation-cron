@@ -5,13 +5,11 @@ export const transcribeAudio = async (recordings: FileInfoMap) => {
   const deepgram = createClient(process.env.DEEPGRAM_API_KEY);
   const transcripts: StringMap = {};
   for (const [key, file] of Object.entries(recordings)) {
-    const type = key.split('.').pop();
-    let wavFile = file.buffer;
-
     const { result, error } = await deepgram.listen.prerecorded.transcribeFile(
       file.buffer,
       {
         model: 'nova',
+        detect_language: true,
       }
     );
     if (error) {

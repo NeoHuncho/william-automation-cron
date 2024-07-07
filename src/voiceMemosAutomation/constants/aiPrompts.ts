@@ -1,5 +1,9 @@
 import { RecordingTypeKey, TranscriptVariants } from '../types/types.js';
-import { diaryEntryOrDreamPrompt, textCleaned } from './constants.js';
+import {
+  diaryEntryOrDreamPrompt,
+  textCleaned,
+  yearlyReviewPrompt,
+} from './constants.js';
 
 type PromptObject = {
   [K in RecordingTypeKey]?: {
@@ -17,5 +21,8 @@ export const aiPrompts: PromptObject = {
   },
   Q: {
     transcript: textCleaned,
+  },
+  Y: {
+    transcript: yearlyReviewPrompt,
   },
 };

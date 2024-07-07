@@ -4,7 +4,6 @@ import { logger } from '../../common/logger.js';
 import { notionDatabaseId } from '../constants/notionDatabaseId.js';
 import { FileInfoMap, TranscriptMap } from '../types/types.js';
 import { determineTranscriptType } from '../utils/determineTranscriptType.js';
-import { extractTagsFromRecordingTitle } from '../utils/extractTagsFromRecordingTitle.js';
 export const startNotionClient = () =>
   new Client({ auth: process.env.NOTION_API_KEY });
 
@@ -15,7 +14,6 @@ async function createEntryDatabase({
   pageText,
   transcript,
   key,
-  tags,
 }: {
   title: string;
   recordingAt: string;
@@ -23,8 +21,11 @@ async function createEntryDatabase({
   pageText?: string;
   transcript?: string;
   key: string;
-  tags?: string[];
 }) {
+  const tags = [{ name: 'William' }];
+  if (key === 'Y') {
+    tags.push({ name: 'Yearly review' });
+  }
   const properties = {
     title: {
       title: [
@@ -50,9 +51,7 @@ async function createEntryDatabase({
       ],
     },
     Tags: {
-      multi_select: tags
-        ? tags.map((tag) => ({ name: tag }))
-        : [{ name: 'William' }],
+      multi_select: tags,
     },
   };
 
@@ -118,7 +117,6 @@ export async function addPageToDatabase({
   const processedKeys: string[] = [];
   for (const [key, transcripts] of Object.entries(scripts)) {
     const recording = recordings[key];
-    const tags = extractTagsFromRecordingTitle(key);
     if (recording === undefined) {
       logger.error('Recording not found:', key);
       continue;
@@ -130,7 +128,6 @@ export async function addPageToDatabase({
           recordingAt: recording.lastModified,
           client,
           key,
-          tags,
         });
         processedKeys.push(key);
         continue;
@@ -142,7 +139,6 @@ export async function addPageToDatabase({
         pageText: transcripts.enhanced,
         key,
         transcript: transcripts.transcript,
-        tags,
       });
       processedKeys.push(key);
     } catch (error) {

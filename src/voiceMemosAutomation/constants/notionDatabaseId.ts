@@ -4,6 +4,10 @@ export const notionDatabaseId = () => {
       process.env.NODE_ENV !== 'production'
         ? 'b69a8579120d4b879d0384921bd0e19d'
         : '6815102148854a68bac7e74d949304e0',
+    Y:
+      process.env.NODE_ENV !== 'production'
+        ? 'b69a8579120d4b879d0384921bd0e19d'
+        : '6815102148854a68bac7e74d949304e0',
     DR:
       process.env.NODE_ENV !== 'production'
         ? 'aaa908c8daa445f39e8bbd87876889a1'

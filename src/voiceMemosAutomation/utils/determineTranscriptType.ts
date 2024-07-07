@@ -5,7 +5,7 @@ export function determineTranscriptType(
 ): VoiceRecordingVariants | undefined {
   const enumValues = Object.values(VoiceRecordingVariants).filter(
     (val) => typeof val === 'string'
-  ) as VoiceRecordingVariants[];
+  ) as unknown as VoiceRecordingVariants[];
   const prefix = str.slice(0, 2);
   const match = enumValues.find((val) =>
     prefix.toUpperCase().includes(val.toString().toUpperCase())

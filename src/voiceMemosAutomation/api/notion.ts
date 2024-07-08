@@ -2,7 +2,11 @@ import { Client } from '@notionhq/client';
 import { markdownToBlocks } from '@tryfabric/martian';
 import { logger } from '../../common/logger.js';
 import { notionDatabaseId } from '../constants/notionDatabaseId.js';
-import { FileInfoMap, TranscriptMap } from '../types/types.js';
+import {
+  FileInfoMap,
+  TranscriptMap,
+  VoiceRecordingVariants,
+} from '../types/types.js';
 import { determineTranscriptType } from '../utils/determineTranscriptType.js';
 export const startNotionClient = () =>
   new Client({ auth: process.env.NOTION_API_KEY });
@@ -23,9 +27,12 @@ async function createEntryDatabase({
   key: string;
 }) {
   const tags = [{ name: 'William' }];
-  if (key === 'Y') {
+  console.log(determineTranscriptType(key), VoiceRecordingVariants);
+  if (determineTranscriptType(key) === VoiceRecordingVariants.Y) {
     tags.push({ name: 'Yearly review' });
   }
+  title = title;
+
   const properties = {
     title: {
       title: [

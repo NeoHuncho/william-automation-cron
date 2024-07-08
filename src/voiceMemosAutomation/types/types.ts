@@ -1,12 +1,12 @@
 export enum VoiceRecordingVariants {
   //diary entry
-  DI,
+  DI = 'DI',
   //quote
-  Q,
+  Q = 'Q',
   //dream
-  DR,
+  DR = 'DR',
   //yearly review
-  Y,
+  Y = 'Y',
 }
 
 export enum TranscriptVariants {

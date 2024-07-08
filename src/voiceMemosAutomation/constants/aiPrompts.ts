@@ -19,10 +19,11 @@ export const aiPrompts: PromptObject = {
     transcript: textCleaned,
     enhanced: diaryEntryOrDreamPrompt('dreams'),
   },
+  Y: {
+    transcript: textCleaned,
+    enhanced: yearlyReviewPrompt,
+  },
   Q: {
     transcript: textCleaned,
-  },
-  Y: {
-    transcript: yearlyReviewPrompt,
   },
 };

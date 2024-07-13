@@ -1,17 +1,15 @@
+const mainDatabase = (NODE_ENV: string) => {
+  return NODE_ENV !== 'production'
+    ? 'b69a8579120d4b879d0384921bd0e19d'
+    : '6815102148854a68bac7e74d949304e0';
+};
+
 export const notionDatabaseId = () => {
   return {
-    DI:
-      process.env.NODE_ENV !== 'production'
-        ? 'b69a8579120d4b879d0384921bd0e19d'
-        : '6815102148854a68bac7e74d949304e0',
-    Y:
-      process.env.NODE_ENV !== 'production'
-        ? 'b69a8579120d4b879d0384921bd0e19d'
-        : '6815102148854a68bac7e74d949304e0',
-    DR:
-      process.env.NODE_ENV !== 'production'
-        ? 'aaa908c8daa445f39e8bbd87876889a1'
-        : '7807742d5c7848bf8f0364750825e1a3',
+    DI: mainDatabase(process.env.NODE_ENV),
+    Y: mainDatabase(process.env.NODE_ENV),
+    DR: mainDatabase(process.env.NODE_ENV),
+    T: mainDatabase(process.env.NODE_ENV),
     Q:
       process.env.NODE_ENV !== 'production'
         ? '89d369a6f0a04ecf838ebd11f1e1d948'

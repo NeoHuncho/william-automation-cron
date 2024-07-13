@@ -7,6 +7,8 @@ export enum VoiceRecordingVariants {
   DR = 'DR',
   //yearly review
   Y = 'Y',
+  // topic
+  T = 'T',
 }
 
 export enum TranscriptVariants {

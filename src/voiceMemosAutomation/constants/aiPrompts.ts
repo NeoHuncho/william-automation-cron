@@ -1,6 +1,6 @@
 import { RecordingTypeKey, TranscriptVariants } from '../types/types.js';
 import {
-  diaryEntryOrDreamPrompt,
+  generalPurposeEnhancedPrompt,
   textCleaned,
   yearlyReviewPrompt,
 } from './constants.js';
@@ -13,11 +13,15 @@ type PromptObject = {
 export const aiPrompts: PromptObject = {
   DI: {
     transcript: textCleaned,
-    enhanced: diaryEntryOrDreamPrompt('diary entry'),
+    enhanced: generalPurposeEnhancedPrompt('my diary entry'),
   },
   DR: {
     transcript: textCleaned,
-    enhanced: diaryEntryOrDreamPrompt('dreams'),
+    enhanced: generalPurposeEnhancedPrompt('my dream diary entry'),
+  },
+  T: {
+    transcript: textCleaned,
+    enhanced: generalPurposeEnhancedPrompt('the topic discussed'),
   },
   Y: {
     transcript: textCleaned,

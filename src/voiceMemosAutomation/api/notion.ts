@@ -26,12 +26,20 @@ async function createEntryDatabase({
   transcript?: string;
   key: string;
 }) {
-  const tags = [{ name: 'William' }];
-  console.log(determineTranscriptType(key), VoiceRecordingVariants);
+  const tags = [];
+
   if (determineTranscriptType(key) === VoiceRecordingVariants.Y) {
     tags.push({ name: 'Yearly review' });
   }
-  title = title;
+  if (determineTranscriptType(key) === VoiceRecordingVariants.DI) {
+    tags.push({ name: 'Diary entry' });
+  }
+  if (determineTranscriptType(key) === VoiceRecordingVariants.DR) {
+    tags.push({ name: 'Dream' });
+  }
+  if (determineTranscriptType(key) === VoiceRecordingVariants.T) {
+    tags.push({ name: 'Topic' });
+  }
 
   const properties = {
     title: {

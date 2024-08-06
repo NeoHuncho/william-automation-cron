@@ -14,6 +14,7 @@ dotenv.config({ path: projectRoot + '/.env' });
 
 export const processRecordings = async () => {
   initLogger();
+
   try {
     const nonFilteredRecordings = await getUnprocessedNextCloudRecordings();
     const recordings = filterOutUnknownFileNamingTypes(nonFilteredRecordings);

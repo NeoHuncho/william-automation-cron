@@ -121,19 +121,20 @@ async function createEntryDatabase({
 }
 
 export async function addPageToDatabase({
-  client,
   recordings,
   scripts,
 }: {
-  client: Client;
   recordings: FileInfoMap;
   scripts: TranscriptMap;
 }) {
+  const client = startNotionClient();
   const processedKeys: string[] = [];
   for (const [key, transcripts] of Object.entries(scripts)) {
     const recording = recordings[key];
     if (recording === undefined) {
-      logger.error('Recording not found:', key);
+      logger.error('Recording not found:', {
+        key,
+      });
       continue;
     }
     try {

@@ -6,7 +6,9 @@ export const filterOutUnknownFileNamingTypes = (recordings: FileInfoMap) =>
   Object.entries(recordings)
     .filter(([key, file]) => {
       if (determineTranscriptType(key) === undefined) {
-        logger.error('unknown transcript type', key);
+        logger.error('unknown transcript type', {
+          key,
+        });
       }
       return determineTranscriptType(key) !== undefined;
     })

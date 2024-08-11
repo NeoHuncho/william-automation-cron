@@ -76,5 +76,5 @@ export const notionTags = {
   DI: 'Diary entry',
   DR: 'Dream',
   T: 'Topic',
-  R: 'Art Review',
+  R: 'Media Review',
 };

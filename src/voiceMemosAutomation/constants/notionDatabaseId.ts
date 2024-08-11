@@ -6,10 +6,7 @@ const mainDatabase = (NODE_ENV: string) => {
 
 export const notionDatabaseId = () => {
   return {
-    DI: mainDatabase(process.env.NODE_ENV),
-    Y: mainDatabase(process.env.NODE_ENV),
-    DR: mainDatabase(process.env.NODE_ENV),
-    T: mainDatabase(process.env.NODE_ENV),
+    DEFAULT: mainDatabase(process.env.NODE_ENV),
     Q:
       process.env.NODE_ENV !== 'production'
         ? '89d369a6f0a04ecf838ebd11f1e1d948'

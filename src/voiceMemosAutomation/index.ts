@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import cron from 'node-cron';
-import { logger } from '../common/logger.js';
+import { hasUnsolvedBreakingError, logger } from '../common/logger.js';
 import { projectRoot } from '../common/utils/getDirname.js';
 import { transcribeAudio } from './api/deepgram.js';
 import {
@@ -14,17 +14,17 @@ dotenv.config({ path: projectRoot + '/.env' });
 
 export const processRecordings = async () => {
   try {
+    if ((await hasUnsolvedBreakingError()) === true) return;
+
     const nonFilteredRecordings = await getUnprocessedNextCloudRecordings();
     const recordings = filterOutUnknownFileNamingTypes(nonFilteredRecordings);
     if (Object.keys(recordings).length === 0) return;
     const transcripts = await transcribeAudio(recordings);
     const markdownScripts = await aiParseVoiceMemo(transcripts);
-
     const processedTranscripts = await addPageToDatabase({
       recordings,
       scripts: markdownScripts,
     });
-
     await moveProcessedFiles(processedTranscripts);
   } catch (error) {
     logger.error('🚨Unhandled error ocurred🚨 :', {

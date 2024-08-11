@@ -2,11 +2,7 @@ import { Client } from '@notionhq/client';
 import { markdownToBlocks } from '@tryfabric/martian';
 import { logger } from '../../common/logger.js';
 import { notionDatabaseId } from '../constants/notionDatabaseId.js';
-import {
-  FileInfoMap,
-  TranscriptMap,
-  VoiceRecordingVariants,
-} from '../types/types.js';
+import { FileInfoMap, notionTags, TranscriptMap } from '../types/types.js';
 import { determineTranscriptType } from '../utils/determineTranscriptType.js';
 export const startNotionClient = () =>
   new Client({ auth: process.env.NOTION_API_KEY });
@@ -28,18 +24,10 @@ async function createEntryDatabase({
 }) {
   const tags = [];
 
-  if (determineTranscriptType(key) === VoiceRecordingVariants.Y) {
-    tags.push({ name: 'Yearly review' });
-  }
-  if (determineTranscriptType(key) === VoiceRecordingVariants.DI) {
-    tags.push({ name: 'Diary entry' });
-  }
-  if (determineTranscriptType(key) === VoiceRecordingVariants.DR) {
-    tags.push({ name: 'Dream' });
-  }
-  if (determineTranscriptType(key) === VoiceRecordingVariants.T) {
-    tags.push({ name: 'Topic' });
-  }
+  if (notionTags[determineTranscriptType(key)] !== undefined)
+    tags.push({
+      name: notionTags[key],
+    });
 
   const properties = {
     title: {
@@ -70,8 +58,10 @@ async function createEntryDatabase({
     },
   };
 
+  const database_id =
+    notionDatabaseId()[determineTranscriptType(key) === 'Q' ? 'Q' : 'DEFAULT'];
   const pageCreateProperties = {
-    parent: { database_id: notionDatabaseId()[determineTranscriptType(key)] },
+    parent: { database_id },
     properties,
   };
 
@@ -132,7 +122,7 @@ export async function addPageToDatabase({
   for (const [key, transcripts] of Object.entries(scripts)) {
     const recording = recordings[key];
     if (recording === undefined) {
-      logger.error('Recording not found:', {
+      logger.warn('Recording not found:', {
         key,
       });
       continue;

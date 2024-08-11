@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { logger } from '../../common/logger.js';
-import { aiPrompts } from '../constants/aiPrompts.js';
-import { StringMap, TranscriptMap } from '../types/types.js';
+import { aiPrompts, StringMap, TranscriptMap } from '../types/types.js';
 import { determineTranscriptType } from '../utils/determineTranscriptType.js';
 
 const getOpenAiLLMPrompt = async (prompt: string) =>

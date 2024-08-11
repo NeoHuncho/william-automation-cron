@@ -1,16 +1,11 @@
-import { FileStat, createClient } from 'webdav';
+import { FileStat } from 'webdav';
 import { logger } from '../../common/logger.js';
-import { voiceRecordingDirectory } from '../constants/constants.js';
+import { createNextcloudClient } from '../../common/nextcloud.js';
+import { voiceRecordingDirectory } from '../constants/nextcloudConstants.js';
 import { FileInfoMap } from '../types/types.js';
 
 export const getUnprocessedNextCloudRecordings = async () => {
-  const client = createClient(
-    `${process.env.NEXTCLOUD_HOST}/remote.php/webdav`,
-    {
-      username: 'william',
-      password: process.env.NEXTCLOUD_PASSWORD,
-    }
-  );
+  const client = createNextcloudClient();
   try {
     const directoryItems = await client.getDirectoryContents(
       voiceRecordingDirectory()
@@ -19,7 +14,7 @@ export const getUnprocessedNextCloudRecordings = async () => {
     for (const item of directoryItems as FileStat[]) {
       if (item.type !== 'file') {
         if (item.type === 'directory') continue;
-        logger.error('Item is not a file:', item);
+        logger.warn('Item is not a file:', item);
         continue;
       }
       if (item.basename === '.DS_Store') continue;
@@ -32,7 +27,7 @@ export const getUnprocessedNextCloudRecordings = async () => {
           buffer: fileContent,
         };
       else
-        logger.error('Error downloading file: fileContent is not a buffer', {
+        logger.warn('Error downloading file: fileContent is not a buffer', {
           name: item.basename,
           type: typeof fileContent,
         });
@@ -48,13 +43,7 @@ export const getUnprocessedNextCloudRecordings = async () => {
 };
 
 export const moveProcessedFiles = async (files: string[]) => {
-  const client = createClient(
-    `${process.env.NEXTCLOUD_HOST}/remote.php/webdav`,
-    {
-      username: 'william',
-      password: process.env.NEXTCLOUD_PASSWORD,
-    }
-  );
+  const client = createNextcloudClient();
 
   try {
     for (const file of files) {

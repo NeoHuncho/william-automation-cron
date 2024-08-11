@@ -1,15 +1,9 @@
 import fetch from 'node-fetch';
-import { createClient } from 'webdav';
-import { voiceRecordingDirectory } from '../voiceMemosAutomation/constants/constants.js';
+import { voiceRecordingDirectory } from '../voiceMemosAutomation/constants/nextcloudConstants.js';
+import { createNextcloudClient } from './nextcloud.js';
 
 const createFileInNextcloud = async (path: string, content: string) => {
-  const client = createClient(
-    `${process.env.NEXTCLOUD_HOST}/remote.php/webdav`,
-    {
-      username: 'william',
-      password: process.env.NEXTCLOUD_PASSWORD,
-    }
-  );
+  const client = createNextcloudClient();
   await client.putFileContents(path, content, { overwrite: true });
 };
 
@@ -57,4 +51,11 @@ export const logger = {
   },
 };
 
-export default logger;
+export const hasUnsolvedBreakingError = async () => {
+  const client = createNextcloudClient();
+
+  const exists = await client.exists(
+    `${voiceRecordingDirectory()}/breaking-error.txt`
+  );
+  return exists;
+};

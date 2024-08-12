@@ -26,7 +26,7 @@ async function createEntryDatabase({
 
   if (notionTags[determineTranscriptType(key)] !== undefined)
     tags.push({
-      name: notionTags[key],
+      name: notionTags[determineTranscriptType(key)],
     });
 
   const properties = {

@@ -33,7 +33,12 @@ export const logger = {
       return;
     }
     const filePath = `${voiceRecordingDirectory()}/breaking-error.txt`;
-    const content = `${message}\n${JSON.stringify(errorInfo, null, 2)}`;
+    const moveFileDisclaim = `PLEASE MOVE TO THE /errors DIRECTORY WHEN FIXED\n\n`;
+    const content = `${moveFileDisclaim}${message}\n${JSON.stringify(
+      errorInfo,
+      null,
+      2
+    )}`;
     await createFileInNextcloud(filePath, content);
     await createVikunjaTask('breaking error on voice memo automation', 5);
   },

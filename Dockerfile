@@ -1,5 +1,5 @@
 # Use an official Node runtime as the base image
-FROM node:20-buster-slim
+FROM node:22-alpine
 
 # Set the working directory in the container to /app
 WORKDIR /app
@@ -8,9 +8,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install Python, make, g++, and any needed packages specified in package.json
-RUN apt-get update && apt-get install -y python3 make g++ && ln -sf python3 /usr/bin/python
+RUN apk add --no-cache python3 make g++ && ln -sf python3 /usr/bin/python
 RUN npm install
-
 # Bundle the source code inside the Docker image
 COPY . .
 

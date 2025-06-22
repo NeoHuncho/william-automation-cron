@@ -8,7 +8,7 @@ const getOpenAiLLMPrompt = async (prompt: string) =>
     .post(
       'https://api.openai.com/v1/chat/completions',
       {
-        model: 'gpt-4o',
+        model: 'gpt-4.1',
 
         temperature: 0.2, // Lower value makes the output more focused and deterministic
         messages: [

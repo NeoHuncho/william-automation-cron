@@ -15,17 +15,40 @@ dotenv.config({ path: projectRoot + '/.env' });
 export const processRecordings = async () => {
   try {
     if ((await hasUnsolvedBreakingError()) === true) return;
-
+    logger.info('Starting processRecordings run');
     const nonFilteredRecordings = await getUnprocessedNextCloudRecordings();
+    logger.info('Fetched recordings from NextCloud', {
+      count: nonFilteredRecordings
+        ? Object.keys(nonFilteredRecordings).length
+        : 0,
+    });
     const recordings = filterOutUnknownFileNamingTypes(nonFilteredRecordings);
-    if (Object.keys(recordings).length === 0) return;
+    logger.info('Filtered recordings', {
+      count: Object.keys(recordings).length,
+    });
+    if (Object.keys(recordings).length === 0) {
+      logger.info('No recordings to process. Exiting.');
+      return;
+    }
     const transcripts = await transcribeAudio(recordings);
+    logger.info('Transcription complete', {
+      count: Object.keys(transcripts).length,
+    });
     const markdownScripts = await aiParseVoiceMemo(transcripts);
+    logger.info('AI parsing complete', {
+      count: Object.keys(markdownScripts).length,
+    });
     const processedTranscripts = await addPageToDatabase({
       recordings,
       scripts: markdownScripts,
     });
+    logger.info('Pages added to Notion', {
+      count: processedTranscripts.length,
+    });
     await moveProcessedFiles(processedTranscripts);
+    logger.info('Moved processed files', {
+      count: processedTranscripts.length,
+    });
   } catch (error) {
     logger.error('🚨Unhandled error ocurred🚨 :', {
       errorName: error.name,

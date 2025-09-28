@@ -26,6 +26,8 @@ const shouldLogToConsole = () => {
   return process.env.NODE_ENV !== 'production';
 };
 
+const isVerboseRun = () => process.env.VERBOSE_RUN_ONCE === 'true';
+
 export const logger = {
   error: async (message: string, errorInfo: object) => {
     if (shouldLogToConsole()) {
@@ -53,6 +55,12 @@ export const logger = {
     const content = `${message}\n${JSON.stringify(warnInfo, null, 2)}`;
     await createFileInNextcloud(filePath, content);
     await createVikunjaTask('error on voice memo automation', 3);
+  },
+  info: (message: string, info?: object) => {
+    if (shouldLogToConsole() || isVerboseRun()) {
+      if (info) console.log('Info:', message, info);
+      else console.log('Info:', message);
+    }
   },
 };
 
